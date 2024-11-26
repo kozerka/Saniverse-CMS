@@ -192,6 +192,7 @@
     }
 
 
+
     .feature-after {
         @apply after:g1 after:absolute after:right-0 after:top-0 after:h-full after:w-1/2 after:mix-blend-soft-light after:content-[''] max-md:after:hidden;
     }
