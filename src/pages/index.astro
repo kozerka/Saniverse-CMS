@@ -2,15 +2,11 @@
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import Layout from '../layouts/Layout.astro';
-
+import { Hero } from '../components/features';
 ---
 
 <Layout title="Welcome to Astro.">
-	<main class="container">
-		<div class=" font-kanit font-extrabold text-p3 text-6xl">hello world</div>
-		<div class="text-3xl  text-p4 font-epilogue">hello world Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum fuga est itaque voluptatibus incidunt, illo repellat cumque! Consequuntur distinctio quaerat est iure ratione quo! Rem est illum labore nobis aliquam.</div>
-		<p class="main-heading">hello world</p>
-	</main>
+    <main class="overflow-hidden">
+        <Hero />
+    </main>
 </Layout>
-
-

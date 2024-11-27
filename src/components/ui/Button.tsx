@@ -1,6 +1,6 @@
-import clsx from "clsx";
-import { Marker } from "./Marker";
-import { type ReactNode } from "react";
+import clsx from 'clsx';
+import { Marker } from './Marker';
+import { type ReactNode } from 'react';
 
 export const Button = ({
     icon,
@@ -24,12 +24,12 @@ export const Button = ({
                     <Marker fill={markerFill} />
                 </span>
 
-                <span className="relative z-2 mx-5 font-poppins base-bold text-p1 uppercase">
+                <span className="relative z-2 mx-5 font-poppins base-bold text-p1  uppercase">
                     {children}
                 </span>
                 {icon && (
                     <span className=" z-10 ml-1 flex items-center">
-                        {typeof icon === "string" ? (
+                        {typeof icon === 'string' ? (
                             <img
                                 src={icon}
                                 alt="icon"
@@ -48,7 +48,7 @@ export const Button = ({
     return href ? (
         <a
             className={clsx(
-                "relative p-0.5 g5 rounded-2xl shadow-500 group",
+                'relative p-0.5 g5 rounded-2xl shadow-500 group',
                 containerClassName
             )}
             href={href}
@@ -58,7 +58,7 @@ export const Button = ({
     ) : (
         <button
             className={clsx(
-                "relative p-0.5 g5 rounded-2xl shadow-500 group",
+                'relative p-0.5 g5 rounded-2xl shadow-500 group',
                 containerClassName
             )}
             onClick={onClick}
