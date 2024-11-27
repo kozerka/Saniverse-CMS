@@ -31,7 +31,6 @@
 }
 
 @layer utilities {
-
     .main-heading {
         @apply font-kanit text-[72px] font-bold leading-[84px];
     }
@@ -89,7 +88,7 @@
     }
 
     .small-2 {
-        @apply text-[12px] font-bold leading-[16px] tracking-[0.3em];
+        @apply text-[12px] font-extrabold leading-[16px] tracking-[0.5em];
     }
 
     .small-compact {
@@ -167,7 +166,7 @@
     }
 
     .dot {
-        @apply size-3.5 rounded-full bg-p2 max-lg:hidden;
+        @apply size-2.5 rounded-full bg-p1 max-lg:hidden shadow-300;
     }
 
     .sidebar-before {
@@ -177,7 +176,6 @@
     .hero-img_res {
         @apply max-lg:-top-40 max-lg:left-[calc(50%-280px)] max-lg:w-[1160px] max-md:bottom-[-590px] max-md:left-[calc(50%-390px)] max-md:top-auto;
     }
-
 
     .inner-before {
         @apply before:g7 before:absolute before:inset-0 before:opacity-0 before:transition-opacity before:duration-500 before:content-[''];
@@ -191,11 +189,9 @@
         @apply after:g8 after:absolute after:bottom-0 after:left-4 after:z-4 after:h-0.5 after:w-7/20 after:opacity-0 after:transition-all after:duration-500 after:content-[''] group-hover:after:left-3/5 group-hover:after:opacity-40;
     }
 
-
     .feature-after {
         @apply after:g1 after:absolute after:right-0 after:top-0 after:h-full after:w-1/2 after:mix-blend-soft-light after:content-[''] max-md:after:hidden;
     }
-
 
     .pricing-head_before {
         @apply before:absolute before:-bottom-44 before:left-1/5 before:h-96 before:w-13/20 before:bg-s4/50 before:blur-[200px] before:content-[''];
@@ -229,7 +225,6 @@
         @apply even:g7 even:rounded-bl-3xl even:rounded-br-3xl even:rounded-tl-3xl even:rounded-tr-3xl even:border-s4;
     }
 
-
     .faq-line_after {
         @apply after:absolute after:-top-1.5 after:left-[calc(50%-5px)] after:z-4 after:size-2.5 after:rounded-half after:border-2 after:border-s2 after:bg-s1 after:content-[''];
     }
@@ -241,7 +236,6 @@
     .faq-icon {
         @apply before:absolute before:h-0.5 before:w-3 before:bg-p3 before:content-[''] after:absolute after:h-0.5 after:w-3 after:rotate-90 after:bg-p3 after:transition-all after:duration-500 after:content-[''];
     }
-
 
     .testimonials_head-res {
         @apply max-2xl:mr-6 max-xl:mr-3 max-lg:mx-auto max-lg:mb-36 max-lg:max-w-330 max-lg:text-center max-md:mb-24 max-md:max-w-52;
@@ -258,8 +252,6 @@
     .testimonials_group-after {
         @apply after:pointer-events-none after:absolute after:-bottom-[212px] after:left-[calc(50%-5px)] after:z-2 after:size-2.5 after:rounded-half after:border-2 after:border-s5 after:bg-s1 after:content-[''] max-lg:after:-bottom-[102px] max-md:after:hidden;
     }
-
-
 
     .legal-after {
         @apply after:absolute after:-right-5 after:top-[calc(50%-1px)] after:h-0.5 after:w-0.5 after:rounded-half after:bg-p2 after:content-[''];
