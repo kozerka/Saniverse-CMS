@@ -1,3 +1,4 @@
 import { Button } from './Button';
 import { Badge } from './Badge';
-export { Button, Badge };
+import SectionTitle from './SectionTitle.astro';
+export { Button, Badge, SectionTitle };

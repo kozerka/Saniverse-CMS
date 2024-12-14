@@ -1,0 +1,103 @@
+---
+import type { SanityDocument } from '@sanity/client';
+import { loadQuery } from '@/sanity/lib/load-query';
+import PortableText from '@/components/PortableText.astro';
+
+export async function getStaticPaths() {
+    const { data: posts } = await loadQuery<SanityDocument[]>({
+        query: `*[_type == "post"]`,
+    });
+
+    return posts.map((post) => ({
+        params: {
+            slug: post.slug.current,
+        },
+    }));
+}
+
+const { params } = Astro;
+
+const { data: post } = await loadQuery<{
+    title: string;
+    body: any[];
+    author?: { name?: string };
+    mainImage?: { asset?: { url?: string }; alt?: string };
+    publishedAt?: string;
+    categories?: Array<{ title?: string }>;
+    tags?: string[];
+}>({
+    query: `*[_type == "post" && slug.current == $slug][0]{
+    title,
+    "slug": slug.current,
+    body,
+    publishedAt,
+    featured,
+    "author": author->,
+    "categories": categories[]->{
+      title
+    },
+    mainImage{
+      asset->{
+        url
+      },
+      alt
+    },
+    tags
+  }`,
+    params,
+});
+
+const authorName = post.author?.name ?? 'Unknown Author';
+const publishedDate = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString()
+    : 'Unknown date';
+---
+
+<article>
+    <h1>{post.title}</h1>
+    {
+        post.mainImage?.asset?.url && (
+            <img
+                src={post.mainImage.asset.url}
+                alt={post.mainImage.alt ?? ''}
+            />
+        )
+    }
+
+    <p><strong>Author:</strong> {authorName}</p>
+    <p><strong>Published:</strong> {publishedDate}</p>
+
+    {
+        post.categories && post.categories.length > 0 && (
+            <>
+                <strong>Categories:</strong>
+                <ul>
+                    {post.categories.map((cat) => (
+                        <li>{cat.title}</li>
+                    ))}
+                </ul>
+            </>
+        )
+    }
+
+    {
+        post.tags && post.tags.length > 0 && (
+            <p>
+                <strong>Tags:</strong> {post.tags.join(', ')}
+            </p>
+        )
+    }
+    <article class="prose dark:prose-dark portable">
+        <PortableText portableText={post.body} />
+    </article>
+</article>
+
+<style>
+    .portable {
+        code {
+            background-color: #a91818;
+            padding: 0.2em 0.4em;
+            border-radius: 0.3em;
+        }
+    }
+</style>

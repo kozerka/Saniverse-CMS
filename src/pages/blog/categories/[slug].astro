@@ -1,0 +1,51 @@
+---
+import type { SanityDocument } from '@sanity/client';
+import { loadQuery } from '@/sanity/lib/load-query';
+import Layout from '@/layouts/Layout.astro';
+
+const { params } = Astro;
+
+const slug = params.slug as string;
+
+const { data: category } = await loadQuery<{
+    title: string;
+    description?: string;
+}>({
+    query: `*[_type == "category" && slug.current == $slug][0]{title, description}`,
+    params: { slug },
+});
+
+const { data: posts } = await loadQuery<SanityDocument[]>({
+    query: `*[_type == "post" && $slug in categories[]->slug.current]{
+        title,
+        slug,
+        mainImage,
+        publishedAt,
+        ...
+    }`,
+    params: { slug },
+});
+---
+
+<Layout title={category ? category.title : 'Category'}>
+    <div class="container mt-32">
+        <h1>{category?.title}</h1>
+        {category?.description && <p>{category.description}</p>}
+
+        {
+            posts && posts.length > 0 ? (
+                <ul>
+                    {posts.map((post) => (
+                        <li>
+                            <a href={`/blog/post/${post.slug.current}`}>
+                                {post.title}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No posts found in this category.</p>
+            )
+        }
+    </div>
+</Layout>

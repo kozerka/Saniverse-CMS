@@ -18,6 +18,7 @@
         "@portabletext/types": "^2.0.13",
         "@sanity/astro": "^3.1.6",
         "@sanity/client": "^6.22.5",
+        "@sanity/code-input": "^5.1.1",
         "@sanity/image-url": "^1.1.0",
         "@sanity/visual-editing": "^2.8.0",
         "@types/react": "^18.3.12",
@@ -35,6 +36,7 @@
         "typescript": "^5.6.3"
     },
     "devDependencies": {
+        "@tailwindcss/typography": "^0.5.15",
         "@types/react-scroll": "^1.8.10",
         "prettier": "^3.4.1",
         "prettier-plugin-astro": "^0.14.1"

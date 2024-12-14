@@ -1,16 +1,56 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import FeaturedPosts from '@/components/features/FeaturedPosts.astro';
+import { AiFillLayout, AiFillPicture } from 'react-icons/ai';
+import { FaRegNewspaper } from 'react-icons/fa';
+import { loadQuery } from '@/sanity/lib/load-query';
+
+const { data: categories } = await loadQuery<
+    {
+        title: string;
+        slug: { current: string };
+    }[]
+>({
+    query: `*[_type == "category"]{
+    title,
+    slug
+  }`,
+});
+
+const iconMap = {
+    UI: AiFillLayout,
+    Design: AiFillPicture,
+    News: FaRegNewspaper,
+};
 ---
 
 <Layout title="Blog">
     <section
         class="relative pt-52 pb-40 max-lg:pt-52 max-lg:pb-36 max-md:pt-36 max-md:pb-32"
     >
-        <div class="container">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos
-            dolorem consectetur, iste tenetur labore autem? Nostrum, iusto.
-            Perspiciatis, minima deleniti nulla magnam pariatur ipsam delectus.
-            Eaque temporibus eos ipsum nisi?
+        <div
+            class="container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+        >
+            {
+                categories.map((cat) => {
+                    return (
+                        <div class="group relative rounded-md bg-gradient-to-r from-[#2bbfff] to-[#4f0588] p-[2px] transition-transform duration-300 hover:scale-105">
+                            <a
+                                href={`/blog/categories/${cat.slug.current}`}
+                                class="flex items-center gap-3 p-6 rounded-md bg-s1"
+                            >
+                                <h3 class="text-xl font-semibold">
+                                    {cat.title}
+                                </h3>
+                            </a>
+                        </div>
+                    );
+                })
+            }
         </div>
+
+        <section class="mt-24">
+            <FeaturedPosts />
+        </section>
     </section>
 </Layout>
