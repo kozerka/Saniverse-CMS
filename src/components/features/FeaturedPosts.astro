@@ -1,0 +1,40 @@
+---
+import { SectionTitle } from '../ui';
+
+const posts = [
+    {
+        title: 'The Future of UI Design',
+        description:
+            'Discover trends shaping the next generation of user interfaces.',
+        path: '/blog/ui/future-of-ui',
+    },
+    {
+        title: 'Top 10 Design Principles',
+        description:
+            'Learn the key principles that make a great design stand out.',
+        path: '/blog/design/top-10-principles',
+    },
+    {
+        title: 'Breaking News in Tech',
+        description: 'Stay updated with the latest tech news and innovations.',
+        path: '/blog/news/tech-breaking-news',
+    },
+];
+---
+
+<div class="container">
+    <SectionTitle title="Featured Posts" />
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {
+            posts.map(({ title, description, path }) => (
+                <a
+                    href={path}
+                    class="block p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                >
+                    <h3 class="text-xl font-semibold">{title}</h3>
+                    <p class="text-gray-600 mt-2">{description}</p>
+                </a>
+            ))
+        }
+    </div>
+</div>
