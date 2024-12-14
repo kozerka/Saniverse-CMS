@@ -32,9 +32,6 @@ export const Hero = () => {
                         >
                             <Button>See Blog space</Button>
                         </LinkScroll>
-                        <MagicButton containerClassName="mt-4">
-                            See Blog space
-                        </MagicButton>
                     </div>
                     <div className="absolute -top-32 left-[calc(50%-340px)] w-[1200px] h-[800px] rounded-full bg-p2 blur-[200px] opacity-30 pointer-events-none hero-img_res"></div>
                 </div>
