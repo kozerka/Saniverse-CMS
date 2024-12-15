@@ -60,7 +60,12 @@ export const Header = () => {
                         <nav className="max-lg:relative max-lg:z-2 max-lg:my-auto">
                             <ul className="flex max-lg:flex max-lg:flex-col max-lg:items-center max-lg:px-12">
                                 <li className="nav-li max-lg:flex max-lg:flex-col max-lg:items-center max-lg:space-y-2">
-                                    <NavLink title="home" />
+                                    <a
+                                        href="/"
+                                        className="base-bold text-p4 uppercase  transition-colors duration-500 cursor-pointer hover:text-p1 max-lg:my-4 max-lg:h5"
+                                    >
+                                        home
+                                    </a>
                                     <div className="dot" />
                                     <NavLink title="features" />
                                 </li>
@@ -84,7 +89,12 @@ export const Header = () => {
                                     </LinkScroll>
                                 </li>
                                 <li className="nav-li max-lg:flex max-lg:flex-col max-lg:items-center max-lg:space-y-2">
-                                    <NavLink title="blog" />
+                                    <a
+                                        href="/blog"
+                                        className="base-bold text-p4 uppercase  transition-colors duration-500 cursor-pointer hover:text-p1 max-lg:my-4 max-lg:h5"
+                                    >
+                                        blog
+                                    </a>
                                     <div className="dot" />
                                     <NavLink title="faq" />
                                 </li>

@@ -1,0 +1,32 @@
+---
+export interface Category {
+    title: string;
+    slug: { current: string };
+}
+
+export interface Props {
+    categories: Category[];
+    selectedCategory: string;
+}
+
+const { categories, selectedCategory } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-2">
+    <a
+        href="/blog?category=all&page=1"
+        class={`px-4 py-2 rounded ${selectedCategory === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+    >
+        All posts
+    </a>
+    {
+        categories.map((cat) => (
+            <a
+                href={`/blog?category=${cat.slug.current}&page=1`}
+                class={`px-4 py-2 rounded ${selectedCategory === cat.slug.current ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            >
+                {cat.title}
+            </a>
+        ))
+    }
+</div>

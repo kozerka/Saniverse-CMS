@@ -1,0 +1,53 @@
+---
+import { SectionTitle } from '../ui';
+import { loadQuery } from '@/sanity/lib/load-query';
+
+interface Author {
+    name: string;
+    slug: { current: string };
+    profession?: string;
+    image?: { asset?: { url: string }; alt?: string };
+}
+
+const { data: authors } = await loadQuery<Author[]>({
+    query: `*[_type == "author"]{
+    name,
+    "slug": slug,
+    profession,
+    image{
+      asset->{
+        url
+      },
+      alt
+    }
+  }`,
+});
+---
+
+<div class="container mx-auto px-4 py-12">
+    <SectionTitle title="Authors" />
+    <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8"
+    >
+        {
+            authors.map((author) => (
+                <a
+                    href={`/authors/${author.slug.current}`}
+                    class="flex flex-col items-center text-center hover:opacity-90 transition-opacity"
+                >
+                    {author.image?.asset?.url && (
+                        <img
+                            src={author.image.asset.url}
+                            alt={author.image.alt ?? author.name}
+                            class="w-24 h-24 object-cover rounded-full mb-4"
+                        />
+                    )}
+                    <h3 class="text-lg font-semibold">{author.name}</h3>
+                    {author.profession && (
+                        <p class="text-sm text-gray-500">{author.profession}</p>
+                    )}
+                </a>
+            ))
+        }
+    </div>
+</div>

@@ -1,0 +1,70 @@
+---
+import PostCard from '@/components/features/PostCard.astro';
+
+export interface Post {
+    title: string;
+    slug: string;
+    excerpt?: string;
+    publishedAt?: string;
+    mainImage?: { asset?: { url: string }; alt?: string };
+    author?: { name: string };
+    categories?: { title: string; slug?: string }[];
+    tags?: string[];
+}
+
+export interface Props {
+    posts: Post[];
+    totalPages: number;
+    currentPage: number;
+    selectedCategory?: string | undefined;
+    selectedTag?: string | undefined;
+}
+
+const { posts, totalPages, currentPage, selectedCategory, selectedTag } =
+    Astro.props;
+
+const getPaginationUrl = (pageNumber: number) => {
+    if (selectedCategory) {
+        return `/blog?category=${selectedCategory}&page=${pageNumber}`;
+    }
+    if (selectedTag) {
+        return `/blog/tags?tag=${selectedTag}&page=${pageNumber}`;
+    }
+    return `/blog?page=${pageNumber}`;
+};
+---
+
+<section class="mt-8">
+    {
+        posts && posts.length > 0 ? (
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                {posts.map((post) => (
+                    <PostCard post={post} />
+                ))}
+            </div>
+        ) : (
+            <p>No posts found.</p>
+        )
+    }
+
+    {
+        totalPages > 1 && (
+            <div class="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNumber) => (
+                        <a
+                            href={getPaginationUrl(pageNumber)}
+                            class={`px-3 py-1 rounded ${
+                                currentPage === pageNumber
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-200 hover:bg-gray-300'
+                            }`}
+                        >
+                            {pageNumber}
+                        </a>
+                    )
+                )}
+            </div>
+        )
+    }
+</section>
