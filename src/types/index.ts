@@ -1,18 +1,23 @@
+export type Category = {
+    title: string;
+    slug?: string;
+};
+
 export type Post = {
     title: string;
     slug: string;
     excerpt?: string;
+    author?: { name?: string };
     publishedAt?: string;
-    mainImage?: { asset?: { url: string }; alt?: string };
-    author?: { name: string };
-    categories?: { title: string; slug?: string }[];
+    mainImage?: { asset?: { url?: string }; alt?: string };
     tags?: string[];
+    categories?: Category[];
 };
 
 export type Props = {
     posts: Post[];
     totalPages: number;
     currentPage: number;
-    selectedCategory?: string | undefined;
-    selectedTag?: string | undefined;
+    selectedCategory?: string;
+    selectedTag?: string;
 };

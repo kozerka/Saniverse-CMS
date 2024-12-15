@@ -7,6 +7,8 @@ import {
 } from '@/sanity/lib/dataLoaders';
 import PostGrid from '@/components/features/PostGrid.astro';
 import Tags from '@/components/features/Tags.astro';
+import { Button } from '@/components/ui/Button';
+import { SectionTitle } from '@/components/ui';
 
 const url = new URL(Astro.request.url);
 
@@ -31,11 +33,10 @@ const totalPages = Math.ceil(totalPosts / postsPerPage);
 
 <Layout title="Tags">
     <section
-        class="relative pt-52 pb-40 max-lg:pt-52 max-lg:pb-36 max-md:pt-36 max-md:pb-32"
+        class="relative pt-52 max-lg:pt-52 max-lg:pb-36 max-md:pt-36 max-md:pb-32"
     >
         <div class="container mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Browse by Tags</h2>
-
+            <SectionTitle title="Posts by Tags" />
             <Tags tags={allTags} selectedTag={tagSlug ?? undefined} />
 
             <PostGrid
@@ -44,6 +45,11 @@ const totalPages = Math.ceil(totalPosts / postsPerPage);
                 currentPage={page}
                 selectedTag={tagSlug ?? undefined}
             />
+            <div class="flex justify-center">
+                <Button href="/blog" containerClassName="mb-6">
+                    Back to Blog Page
+                </Button>
+            </div>
         </div>
     </section>
 </Layout>

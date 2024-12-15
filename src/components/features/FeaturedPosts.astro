@@ -1,20 +1,6 @@
 ---
-interface Category {
-    title: string;
-    slug?: string;
-}
-
-interface Post {
-    title: string;
-    slug: string;
-    excerpt?: string;
-    author?: { name?: string };
-    publishedAt?: string;
-    mainImage?: { asset?: { url?: string }; alt?: string };
-    tags?: string[];
-    categories?: Category[];
-}
-
+import { SectionTitle } from '../ui';
+import { type Post } from '@/types';
 const { featuredPosts } = Astro.props as { featuredPosts: Post[] };
 
 function formatDate(dateString?: string) {
@@ -67,7 +53,7 @@ function formatDate(dateString?: string) {
 </style>
 
 <section class="container mx-auto px-4 py-12">
-    <h2 class="text-3xl font-bold mb-8">Featured Posts</h2>
+    <SectionTitle title="Featured Posts" />
 
     <div class="bento-grid">
         {
