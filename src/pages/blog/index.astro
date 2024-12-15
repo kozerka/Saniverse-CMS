@@ -36,6 +36,9 @@ const { data: authorsData } = await loadAuthors();
     <section
         class="relative pt-52 pb-40 max-lg:pt-52 max-lg:pb-36 max-md:pt-36 max-md:pb-32"
     >
+        <section class="mt-8 mb-16">
+            <FeaturedPosts featuredPosts={featuredPosts} />
+        </section>
         <div class="container mb-8">
             <SectionTitle title="Post by categories" />
             <Categories
@@ -49,10 +52,6 @@ const { data: authorsData } = await loadAuthors();
                 selectedCategory={categoryParam}
             />
         </div>
-
-        <section class="mt-24">
-            <FeaturedPosts featuredPosts={featuredPosts} />
-        </section>
 
         <section class="mt-8">
             <Authors authors={authorsData} />

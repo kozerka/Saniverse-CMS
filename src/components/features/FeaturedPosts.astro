@@ -85,12 +85,9 @@ function formatDate(dateString?: string) {
                     {post.categories && post.categories.length > 0 && (
                         <div class="p-4 flex flex-wrap gap-2">
                             {post.categories.map((category) => (
-                                <a
-                                    href={`/blog/categories/${category.slug}`}
-                                    class="bg-p1 hover:bg-p1/80 text-black text-xs px-3 py-1 rounded-full shadow font-bold uppercase"
-                                >
+                                <p class="bg-p1  text-black text-xs px-3 py-1 rounded-full shadow font-bold uppercase">
                                     {category.title}
-                                </a>
+                                </p>
                             ))}
                         </div>
                     )}
