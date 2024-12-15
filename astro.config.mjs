@@ -5,29 +5,28 @@ import sanity from '@sanity/astro';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
 
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-    integrations: [
-        sanity({
-            projectId: 'di98mlum',
-            dataset: 'production',
-            useCdn: false,
-            apiVersion: '2024-07-24',
-            studioBasePath: '/studio',
-        }),
-        ,
-        react(),
-        tailwind(),
-    ],
+  integrations: [
+      sanity({
+          projectId: 'di98mlum',
+          dataset: 'production',
+          useCdn: false,
+          apiVersion: '2024-07-24',
+          studioBasePath: '/studio',
+      }),
+      ,
+      react(),
+      tailwind(),
+  ],
 
-    output: 'server',
+  output: 'server',
 
-    adapter: node({
-        mode: 'standalone',
-    }),
-    devToolbar: {
-        enabled: false,
-    },
+  devToolbar: {
+      enabled: false,
+  },
+
+  adapter: vercel(),
 });
