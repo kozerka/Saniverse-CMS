@@ -1,40 +1,385 @@
 ---
-import { SectionTitle } from '../ui';
+interface Category {
+    title: string;
+    slug?: string;
+}
 
-const posts = [
-    {
-        title: 'The Future of UI Design',
-        description:
-            'Discover trends shaping the next generation of user interfaces.',
-        path: '/blog/ui/future-of-ui',
-    },
-    {
-        title: 'Top 10 Design Principles',
-        description:
-            'Learn the key principles that make a great design stand out.',
-        path: '/blog/design/top-10-principles',
-    },
-    {
-        title: 'Breaking News in Tech',
-        description: 'Stay updated with the latest tech news and innovations.',
-        path: '/blog/news/tech-breaking-news',
-    },
-];
+interface Post {
+    title: string;
+    slug: string;
+    excerpt?: string;
+    author?: { name?: string };
+    publishedAt?: string;
+    mainImage?: { asset?: { url?: string }; alt?: string };
+    tags?: string[];
+    categories?: Category[];
+}
+
+const { featuredPosts } = Astro.props as { featuredPosts: Post[] };
+
+function formatDate(dateString?: string) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+}
 ---
 
-<div class="container">
-    <SectionTitle title="Featured Posts" />
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<style>
+    @media (min-width: 768px) {
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, auto);
+            gap: 1rem;
+        }
+
+        .big {
+            grid-column: 1 / span 3;
+            grid-row: 1 / span 3;
+        }
+
+        .tall {
+            grid-column: 4;
+            grid-row: 1 / span 3;
+        }
+
+        .bottom-left {
+            grid-column: 1 / span 2;
+            grid-row: 4;
+        }
+
+        .bottom-right {
+            grid-column: 3 / span 2;
+            grid-row: 4;
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    }
+</style>
+
+<section class="container mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold mb-8">Featured Posts</h2>
+
+    <div class="bento-grid">
         {
-            posts.map(({ title, description, path }) => (
-                <a
-                    href={path}
-                    class="block p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                >
-                    <h3 class="text-xl font-semibold">{title}</h3>
-                    <p class="text-gray-600 mt-2">{description}</p>
-                </a>
-            ))
+            featuredPosts[0] && (
+                <article class="big bg-gray-900 text-white rounded-lg overflow-hidden flex flex-col">
+                    {featuredPosts[0].mainImage?.asset?.url && (
+                        <img
+                            src={featuredPosts[0].mainImage.asset.url}
+                            alt={
+                                featuredPosts[0].mainImage.alt ??
+                                featuredPosts[0].title
+                            }
+                            class="w-full h-64 object-cover"
+                        />
+                    )}
+                    <div class="p-4 flex-1 flex flex-col">
+                        <span class="text-sm text-gray-400 mb-2">
+                            {formatDate(featuredPosts[0].publishedAt)}
+                        </span>
+                        <h3 class="text-2xl font-semibold mb-2">
+                            {featuredPosts[0].title}
+                        </h3>
+                        {featuredPosts[0].author?.name && (
+                            <p class="text-sm text-gray-300 mb-2">
+                                By {featuredPosts[0].author.name}
+                            </p>
+                        )}
+
+                        {featuredPosts[0].categories &&
+                            featuredPosts[0].categories.length > 0 && (
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    {featuredPosts[0].categories.map((c) => (
+                                        <a
+                                            href={`/blog/categories/${c.slug}`}
+                                            class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-2 py-1 rounded-full"
+                                        >
+                                            {c.title}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+
+                        {featuredPosts[0].tags &&
+                            featuredPosts[0].tags.length > 0 && (
+                                <p class="text-sm text-gray-300 mb-2">
+                                    Tags:{' '}
+                                    {featuredPosts[0].tags.map((tag, i) => (
+                                        <>
+                                            <a
+                                                href={`/blog/tag/${tag}`}
+                                                class="hover:text-blue-400"
+                                            >
+                                                {tag}
+                                            </a>
+                                            {i <
+                                                (featuredPosts[0].tags
+                                                    ?.length ?? 0) -
+                                                    1 && ', '}
+                                        </>
+                                    ))}
+                                </p>
+                            )}
+
+                        {featuredPosts[0].excerpt && (
+                            <p class="text-sm text-gray-200 mb-4 line-clamp-3">
+                                {featuredPosts[0].excerpt}
+                            </p>
+                        )}
+
+                        <a
+                            href={`/blog/post/${featuredPosts[0].slug}`}
+                            class="mt-auto inline-block text-blue-400 hover:text-blue-300 underline"
+                        >
+                            Read more
+                        </a>
+                    </div>
+                </article>
+            )
+        }
+
+        {
+            featuredPosts[1] && (
+                <article class="tall bg-white text-gray-900 rounded-lg overflow-hidden flex flex-col">
+                    {featuredPosts[1].mainImage?.asset?.url && (
+                        <img
+                            src={featuredPosts[1].mainImage.asset.url}
+                            alt={
+                                featuredPosts[1].mainImage.alt ??
+                                featuredPosts[1].title
+                            }
+                            class="w-full h-64 object-cover"
+                        />
+                    )}
+                    <div class="p-4 flex-1 flex flex-col">
+                        <span class="text-sm text-gray-500 mb-2">
+                            {formatDate(featuredPosts[1].publishedAt)}
+                        </span>
+                        <h3 class="text-xl font-semibold mb-2">
+                            {featuredPosts[1].title}
+                        </h3>
+                        {featuredPosts[1].author?.name && (
+                            <p class="text-sm text-gray-600 mb-2">
+                                By {featuredPosts[1].author.name}
+                            </p>
+                        )}
+
+                        {featuredPosts[1].categories &&
+                            featuredPosts[1].categories.length > 0 && (
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    {featuredPosts[1].categories.map((c) => (
+                                        <a
+                                            href={`/blog/categories/${c.slug}`}
+                                            class="bg-green-100 hover:bg-green-200 text-green-800 text-xs px-2 py-1 rounded-full"
+                                        >
+                                            {c.title}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+
+                        {featuredPosts[1].tags &&
+                            featuredPosts[1].tags.length > 0 && (
+                                <p class="text-sm text-gray-700 mb-2">
+                                    Tags:{' '}
+                                    {featuredPosts[1].tags.map((tag, i) => (
+                                        <>
+                                            <a
+                                                href={`/blog/tag/${tag}`}
+                                                class="hover:text-green-600"
+                                            >
+                                                {tag}
+                                            </a>
+                                            {i <
+                                                (featuredPosts[1].tags
+                                                    ?.length ?? 0) -
+                                                    1 && ', '}
+                                        </>
+                                    ))}
+                                </p>
+                            )}
+
+                        {featuredPosts[1].excerpt && (
+                            <p class="text-sm text-gray-700 mb-4 line-clamp-3">
+                                {featuredPosts[1].excerpt}
+                            </p>
+                        )}
+
+                        <a
+                            href={`/blog/post/${featuredPosts[1].slug}`}
+                            class="mt-auto inline-block text-green-600 hover:text-green-500 underline"
+                        >
+                            Read more
+                        </a>
+                    </div>
+                </article>
+            )
+        }
+
+        {
+            featuredPosts[2] && (
+                <article class="bottom-left bg-white text-gray-900 rounded-lg overflow-hidden flex flex-row">
+                    {featuredPosts[2].mainImage?.asset?.url && (
+                        <img
+                            src={featuredPosts[2].mainImage.asset.url}
+                            alt={
+                                featuredPosts[2].mainImage.alt ??
+                                featuredPosts[2].title
+                            }
+                            class="w-32 h-full object-cover"
+                        />
+                    )}
+                    <div class="p-4 flex-1 flex flex-col">
+                        <span class="text-sm text-gray-500 mb-2">
+                            {formatDate(featuredPosts[2].publishedAt)}
+                        </span>
+                        <h3 class="text-lg font-semibold mb-2">
+                            {featuredPosts[2].title}
+                        </h3>
+                        {featuredPosts[2].author?.name && (
+                            <p class="text-sm text-gray-600 mb-2">
+                                By {featuredPosts[2].author.name}
+                            </p>
+                        )}
+
+                        {featuredPosts[2].categories &&
+                            featuredPosts[2].categories.length > 0 && (
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    {featuredPosts[2].categories.map((c) => (
+                                        <a
+                                            href={`/blog/categories/${c.slug}`}
+                                            class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-xs px-2 py-1 rounded-full"
+                                        >
+                                            {c.title}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+
+                        {featuredPosts[2].tags &&
+                            featuredPosts[2].tags.length > 0 && (
+                                <p class="text-sm text-gray-700 mb-2">
+                                    Tags:{' '}
+                                    {featuredPosts[2].tags.map((tag, i) => (
+                                        <>
+                                            <a
+                                                href={`/blog/tag/${tag}`}
+                                                class="hover:text-yellow-600"
+                                            >
+                                                {tag}
+                                            </a>
+                                            {i <
+                                                (featuredPosts[2].tags
+                                                    ?.length ?? 0) -
+                                                    1 && ', '}
+                                        </>
+                                    ))}
+                                </p>
+                            )}
+
+                        {featuredPosts[2].excerpt && (
+                            <p class="text-sm text-gray-700 mb-4 line-clamp-3">
+                                {featuredPosts[2].excerpt}
+                            </p>
+                        )}
+
+                        <a
+                            href={`/blog/post/${featuredPosts[2].slug}`}
+                            class="mt-auto inline-block text-yellow-600 hover:text-yellow-500 underline"
+                        >
+                            Read more
+                        </a>
+                    </div>
+                </article>
+            )
+        }
+
+        {
+            featuredPosts[3] && (
+                <article class="bottom-right bg-white text-gray-900 rounded-lg overflow-hidden flex flex-row">
+                    {featuredPosts[3].mainImage?.asset?.url && (
+                        <img
+                            src={featuredPosts[3].mainImage.asset.url}
+                            alt={
+                                featuredPosts[3].mainImage.alt ??
+                                featuredPosts[3].title
+                            }
+                            class="w-32 h-full object-cover"
+                        />
+                    )}
+                    <div class="p-4 flex-1 flex flex-col">
+                        <span class="text-sm text-gray-500 mb-2">
+                            {formatDate(featuredPosts[3].publishedAt)}
+                        </span>
+                        <h3 class="text-lg font-semibold mb-2">
+                            {featuredPosts[3].title}
+                        </h3>
+                        {featuredPosts[3].author?.name && (
+                            <p class="text-sm text-gray-600 mb-2">
+                                By {featuredPosts[3].author.name}
+                            </p>
+                        )}
+
+                        {featuredPosts[3].categories &&
+                            featuredPosts[3].categories.length > 0 && (
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    {featuredPosts[3].categories.map((c) => (
+                                        <a
+                                            href={`/blog/categories/${c.slug}`}
+                                            class="bg-red-100 hover:bg-red-200 text-red-800 text-xs px-2 py-1 rounded-full"
+                                        >
+                                            {c.title}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+
+                        {featuredPosts[3].tags &&
+                            featuredPosts[3].tags.length > 0 && (
+                                <p class="text-sm text-gray-700 mb-2">
+                                    Tags:{' '}
+                                    {featuredPosts[3].tags.map((tag, i) => (
+                                        <>
+                                            <a
+                                                href={`/blog/tag/${tag}`}
+                                                class="hover:text-red-600"
+                                            >
+                                                {tag}
+                                            </a>
+                                            {i <
+                                                (featuredPosts[3].tags
+                                                    ?.length ?? 0) -
+                                                    1 && ', '}
+                                        </>
+                                    ))}
+                                </p>
+                            )}
+
+                        {featuredPosts[3].excerpt && (
+                            <p class="text-sm text-gray-700 mb-4 line-clamp-3">
+                                {featuredPosts[3].excerpt}
+                            </p>
+                        )}
+
+                        <a
+                            href={`/blog/post/${featuredPosts[3].slug}`}
+                            class="mt-auto inline-block text-red-600 hover:text-red-500 underline"
+                        >
+                            Read more
+                        </a>
+                    </div>
+                </article>
+            )
         }
     </div>
-</div>
+</section>

@@ -2,6 +2,7 @@
 import type { SanityDocument } from '@sanity/client';
 import { loadQuery } from '@/sanity/lib/load-query';
 import PortableText from '@/components/PortableText.astro';
+import Layout from '@/layouts/Layout.astro';
 
 export async function getStaticPaths() {
     const { data: posts } = await loadQuery<SanityDocument[]>({
@@ -53,44 +54,51 @@ const publishedDate = post.publishedAt
     : 'Unknown date';
 ---
 
-<article>
-    <h1>{post.title}</h1>
-    {
-        post.mainImage?.asset?.url && (
-            <img
-                src={post.mainImage.asset.url}
-                alt={post.mainImage.alt ?? ''}
-            />
-        )
-    }
+<Layout title={post.title}>
+    <article class="container mt-32 w-full max-w-[900px] mx-auto">
+        <h1 class="text-3xl font-bold mb-4">{post.title}</h1>
 
-    <p><strong>Author:</strong> {authorName}</p>
-    <p><strong>Published:</strong> {publishedDate}</p>
+        {
+            post.mainImage?.asset?.url && (
+                <img
+                    src={post.mainImage.asset.url}
+                    alt={post.mainImage.alt ?? ''}
+                    class="w-full h-auto mb-4"
+                />
+            )
+        }
 
-    {
-        post.categories && post.categories.length > 0 && (
-            <>
-                <strong>Categories:</strong>
-                <ul>
-                    {post.categories.map((cat) => (
-                        <li>{cat.title}</li>
-                    ))}
-                </ul>
-            </>
-        )
-    }
+        <p><strong>Author:</strong> {authorName}</p>
+        <p><strong>Published:</strong> {publishedDate}</p>
 
-    {
-        post.tags && post.tags.length > 0 && (
-            <p>
-                <strong>Tags:</strong> {post.tags.join(', ')}
-            </p>
-        )
-    }
-    <article class="prose dark:prose-dark portable">
-        <PortableText portableText={post.body} />
+        {
+            post.categories && post.categories.length > 0 && (
+                <>
+                    <strong>Categories:</strong>
+                    <ul class="list-disc list-inside mb-4">
+                        {post.categories.map((cat) => (
+                            <li>{cat.title}</li>
+                        ))}
+                    </ul>
+                </>
+            )
+        }
+
+        {
+            post.tags && post.tags.length > 0 && (
+                <p class="mb-4">
+                    <strong>Tags:</strong> {post.tags.join(', ')}
+                </p>
+            )
+        }
+
+        <article
+            class="prose dark:prose-invert max-w-none text-p1 portable w-full"
+        >
+            <PortableText portableText={post.body} />
+        </article>
     </article>
-</article>
+</Layout>
 
 <style>
     .portable {
@@ -98,6 +106,10 @@ const publishedDate = post.publishedAt
             background-color: #a91818;
             padding: 0.2em 0.4em;
             border-radius: 0.3em;
+        }
+
+        blockquote {
+            color: white;
         }
     }
 </style>

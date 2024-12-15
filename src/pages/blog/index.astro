@@ -1,56 +1,146 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import FeaturedPosts from '@/components/features/FeaturedPosts.astro';
-import { AiFillLayout, AiFillPicture } from 'react-icons/ai';
-import { FaRegNewspaper } from 'react-icons/fa';
 import { loadQuery } from '@/sanity/lib/load-query';
+import FeaturedPosts from '@/components/features/FeaturedPosts.astro';
+import Authors from '@/components/features/Authors.astro';
+import Categories from '@/components/features/Categories.astro';
+import PostsGrid from '@/components/features/PostGrid.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+
+const url = new URL(Astro.request.url);
+const categoryParam = url.searchParams.get('category') || 'all';
+const pageParam = url.searchParams.get('page') || '1';
+const page = parseInt(pageParam, 10) || 1;
+const postsPerPage = 4;
+const offset = (page - 1) * postsPerPage;
 
 const { data: categories } = await loadQuery<
+    { title: string; slug: { current: string } }[]
+>({
+    query: `*[_type == "category"]{title, slug}`,
+});
+
+let categoryFilter = '';
+if (categoryParam !== 'all') {
+    categoryFilter = `&& $catSlug in categories[]->slug.current`;
+}
+
+const { data: filteredPosts } = await loadQuery<
     {
         title: string;
-        slug: { current: string };
+        slug: string;
+        excerpt?: string;
+        publishedAt?: string;
+        mainImage?: { asset?: { url: string }; alt?: string };
+        author?: { name: string };
+        categories?: { title: string; slug?: string }[];
+        tags?: string[];
     }[]
 >({
-    query: `*[_type == "category"]{
+    query: `*[_type == "post" ${categoryFilter}]| order(publishedAt desc)[$start...$end]{
+        title,
+        "slug": slug.current,
+        excerpt,
+        publishedAt,
+        mainImage{
+            asset->{
+                url
+            },
+            alt
+        },
+        "author": author->{
+            name
+        },
+        categories[]->{
+            title,
+            "slug": slug.current
+        },
+        tags
+    }`,
+    params: {
+        catSlug: categoryParam,
+        start: offset,
+        end: offset + postsPerPage,
+    },
+});
+
+const { data: totalPosts } = await loadQuery<number>({
+    query: `count(*[_type == "post" ${categoryFilter}])`,
+    params: { catSlug: categoryParam },
+});
+
+const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+const { data: featuredPosts } = await loadQuery<
+    {
+        title: string;
+        slug: string;
+        excerpt?: string;
+        publishedAt?: string;
+        author?: { name?: string };
+        mainImage?: { asset?: { url: string }; alt?: string };
+        tags?: string[];
+        categories?: { title: string; slug?: string }[];
+    }[]
+>({
+    query: `*[_type == "post" && featured == true]{
     title,
-    slug
+    "slug": slug.current,
+    excerpt,
+    publishedAt,
+    "author": author->{
+      name
+    },
+    mainImage{
+      asset->{
+        url
+      },
+      alt
+    },
+    tags,
+    categories[]->{
+      title,
+      "slug": slug.current
+    }
   }`,
 });
 
-const iconMap = {
-    UI: AiFillLayout,
-    Design: AiFillPicture,
-    News: FaRegNewspaper,
-};
+const { data: authorsData } = await loadQuery<
+    {
+        name: string;
+        slug: { current: string };
+        image?: { asset?: { url: string } };
+    }[]
+>({
+    query: `*[_type == "author"]{name,slug,image{asset->{url}}}`,
+});
 ---
 
 <Layout title="Blog">
     <section
         class="relative pt-52 pb-40 max-lg:pt-52 max-lg:pb-36 max-md:pt-36 max-md:pb-32"
     >
-        <div
-            class="container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-        >
-            {
-                categories.map((cat) => {
-                    return (
-                        <div class="group relative rounded-md bg-gradient-to-r from-[#2bbfff] to-[#4f0588] p-[2px] transition-transform duration-300 hover:scale-105">
-                            <a
-                                href={`/blog/categories/${cat.slug.current}`}
-                                class="flex items-center gap-3 p-6 rounded-md bg-s1"
-                            >
-                                <h3 class="text-xl font-semibold">
-                                    {cat.title}
-                                </h3>
-                            </a>
-                        </div>
-                    );
-                })
-            }
+        <div class="container mb-8">
+            <SectionTitle title="Post by categories" />
+            <Categories
+                categories={categories}
+                selectedCategory={categoryParam}
+            />
+
+            <PostsGrid
+                posts={filteredPosts}
+                totalPages={totalPages}
+                currentPage={page}
+                selectedCategory={categoryParam}
+            />
         </div>
 
         <section class="mt-24">
-            <FeaturedPosts />
+            <FeaturedPosts {featuredPosts} />
+        </section>
+
+        <section class="mt-8">
+            <Authors authors={authorsData} />
         </section>
     </section>
 </Layout>
