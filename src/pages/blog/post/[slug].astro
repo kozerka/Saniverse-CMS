@@ -21,95 +21,108 @@ const { params } = Astro;
 const { data: post } = await loadQuery<{
     title: string;
     body: any[];
-    author?: { name?: string };
+    author?: { name?: string; image?: { asset?: { url?: string } } };
     mainImage?: { asset?: { url?: string }; alt?: string };
     publishedAt?: string;
     categories?: Array<{ title?: string }>;
     tags?: string[];
 }>({
     query: `*[_type == "post" && slug.current == $slug][0]{
-    title,
-    "slug": slug.current,
-    body,
-    publishedAt,
-    featured,
-    "author": author->,
-    "categories": categories[]->{
-      title
-    },
-    mainImage{
-      asset->{
-        url
-      },
-      alt
-    },
-    tags
-  }`,
-    params,
+        title,
+        body,
+        publishedAt,
+        "author": author->{
+            name,
+            image{
+                asset->{
+                    url
+                }
+            }
+        },
+        mainImage{
+            asset->{
+                url
+            },
+            alt
+        },
+        categories[]->{
+            title
+        },
+        tags
+    }`,
+    params: { slug: params.slug },
 });
 
-const authorName = post.author?.name ?? 'Unknown Author';
+const authorName = post.author ? post.author.name : 'Unknown Author';
 const publishedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString()
     : 'Unknown date';
 ---
 
 <Layout title={post.title}>
-    <article class="container mt-32 w-full max-w-[900px] mx-auto">
-        <h1 class="text-3xl font-bold mb-4">{post.title}</h1>
-
+    <article class="container mt-32 w-full max-w-[900px] mx-auto text-left">
         {
             post.mainImage?.asset?.url && (
                 <img
                     src={post.mainImage.asset.url}
                     alt={post.mainImage.alt ?? ''}
-                    class="w-full h-auto mb-4"
+                    class="w-full h-auto rounded-lg mb-6 shadow-md"
                 />
             )
         }
-
-        <p><strong>Author:</strong> {authorName}</p>
-        <p><strong>Published:</strong> {publishedDate}</p>
+        <h1 class="text-4xl font-bold mb-4">{post.title}</h1>
 
         {
             post.categories && post.categories.length > 0 && (
-                <>
-                    <strong>Categories:</strong>
-                    <ul class="list-disc list-inside mb-4">
-                        {post.categories.map((cat) => (
-                            <li>{cat.title}</li>
-                        ))}
-                    </ul>
-                </>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {post.categories.map((cat) => (
+                        <span class="px-4 py-1 bg-blue-600 text-white rounded-full text-sm shadow">
+                            {cat.title}
+                        </span>
+                    ))}
+                </div>
             )
         }
 
         {
             post.tags && post.tags.length > 0 && (
-                <p class="mb-4">
-                    <strong>Tags:</strong> {post.tags.join(', ')}
-                </p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    {post.tags.map((tag) => (
+                        <span class="px-3 py-1 bg-gray-200 rounded-full text-sm text-gray-700">
+                            #{tag}
+                        </span>
+                    ))}
+                </div>
             )
         }
-
         <article
-            class="prose dark:prose-invert max-w-none text-p1 portable w-full"
+            class="prose dark:prose-invert max-w-none text-p1 portable mx-auto w-full"
         >
             <PortableText portableText={post.body} />
         </article>
+
+        <p class="mt-6 text-sm text-p4">
+            by <strong>{authorName}</strong> on {publishedDate}.
+        </p>
     </article>
 </Layout>
 
 <style>
     .portable {
         code {
-            background-color: #a91818;
+            background-color: #00bbff;
             padding: 0.2em 0.4em;
             border-radius: 0.3em;
         }
 
         blockquote {
             color: white;
+            border-left: 4px solid #ffa500;
+            padding-left: 1em;
+        }
+
+        img {
+            border-radius: 8px;
         }
     }
 </style>
