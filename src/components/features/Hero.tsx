@@ -1,6 +1,5 @@
 import { Element, Link as LinkScroll } from 'react-scroll';
 import { Button } from '../ui';
-import { MagicButton } from '../ui/MagicButton';
 
 export const Hero = () => {
     return (

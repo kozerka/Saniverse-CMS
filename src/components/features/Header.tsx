@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link as LinkScroll } from 'react-scroll';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import saniverseLogo from '@/assets/img/saniverse.png';
 
 export const Header = () => {
     const [hasScrolled, setHasScrolled] = useState(false);
@@ -42,7 +43,7 @@ export const Header = () => {
             <div className="container flex h-14 items-center max-lg:px-5">
                 <a className="lg:hidden flex-1 cursor-pointer z-2">
                     <img
-                        src="/src/assets/img/saniverse.png"
+                        src={saniverseLogo.src}
                         width={60}
                         height={55}
                         alt="logo"
@@ -81,7 +82,7 @@ export const Header = () => {
                                         )}
                                     >
                                         <img
-                                            src="/src/assets/img/saniverse.png"
+                                            src={saniverseLogo.src}
                                             alt="logo"
                                             width={80}
                                             height={55}
