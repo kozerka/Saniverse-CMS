@@ -29,7 +29,14 @@ export async function loadPosts(
                 alt
             },
             "author": author->{
-                name
+                name,
+                "slug": slug.current,
+                image{
+                    asset->{
+                        url
+                    },
+                    alt
+                }
             },
             categories[]->{
                 title,
@@ -63,20 +70,27 @@ export async function loadFeaturedPosts() {
             "slug": slug.current,
             excerpt,
             publishedAt,
-            "author": author->{
-                name
-            },
             mainImage{
                 asset->{
                     url
                 },
                 alt
             },
-            tags,
+            "author": author->{
+                name,
+                "slug": slug.current,
+                image{
+                    asset->{
+                        url
+                    },
+                    alt
+                }
+            },
             categories[]->{
                 title,
                 "slug": slug.current
-            }
+            },
+            tags
         }`,
     });
 }

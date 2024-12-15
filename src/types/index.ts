@@ -7,7 +7,7 @@ export type Post = {
     title: string;
     slug: string;
     excerpt?: string;
-    author?: { name?: string };
+    author?: Author;
     publishedAt?: string;
     mainImage?: { asset?: { url?: string }; alt?: string };
     tags?: string[];
@@ -20,4 +20,9 @@ export type Props = {
     currentPage: number;
     selectedCategory?: string;
     selectedTag?: string;
+};
+export type Author = {
+    name: string;
+    slug?: string;
+    image?: { asset?: { url?: string }; alt?: string };
 };
