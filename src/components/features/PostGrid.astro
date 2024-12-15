@@ -1,16 +1,6 @@
 ---
+import { type Post } from '@/types';
 import PostCard from '@/components/features/PostCard.astro';
-
-export interface Post {
-    title: string;
-    slug: string;
-    excerpt?: string;
-    publishedAt?: string;
-    mainImage?: { asset?: { url: string }; alt?: string };
-    author?: { name: string };
-    categories?: { title: string; slug?: string }[];
-    tags?: string[];
-}
 
 export interface Props {
     posts: Post[];
@@ -43,7 +33,7 @@ const getPaginationUrl = (pageNumber: number) => {
                 ))}
             </div>
         ) : (
-            <p>No posts found.</p>
+            <p class="h6 font-kanit">No posts found.</p>
         )
     }
 

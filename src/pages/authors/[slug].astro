@@ -135,7 +135,9 @@ const { data: posts } = await loadQuery<Post[]>({
                             ))}
                         </div>
                     ) : (
-                        <p>No posts found for this author.</p>
+                        <p class="h6 font-kanit">
+                            No posts found for this author.
+                        </p>
                     )}
                 </>
             ) : (
