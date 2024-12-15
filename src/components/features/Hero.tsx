@@ -29,7 +29,7 @@ export const Hero = () => {
                             duration={500}
                             className="custom-button"
                         >
-                            <Button>See Blog space</Button>
+                            <Button href="/blog">See Blog space</Button>
                         </LinkScroll>
                     </div>
                     <div className="absolute -top-32 left-[calc(50%-340px)] w-[1200px] h-[800px] rounded-full bg-p2 blur-[200px] opacity-30 pointer-events-none hero-img_res"></div>

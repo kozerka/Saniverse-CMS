@@ -2,6 +2,7 @@
 import { loadQuery } from '@/sanity/lib/load-query';
 import PortableText from '@/components/PortableText.astro';
 import Layout from '@/layouts/Layout.astro';
+import { Button } from '@/components/ui';
 
 const { params } = Astro;
 
@@ -31,24 +32,13 @@ interface Post {
     title: string;
     slug: { current: string };
     publishedAt?: string;
-    categories?: { title: string }[];
-    mainImage?: { asset?: { url: string }; alt?: string };
 }
 
 const { data: posts } = await loadQuery<Post[]>({
-    query: `*[_type == "post" && author->slug.current == $slug]{
+    query: `*[_type == "post" && author->slug.current == $slug] | order(publishedAt desc){
     title,
     "slug": slug,
-    publishedAt,
-    categories[]->{
-      title
-    },
-    mainImage{
-      asset->{
-        url
-      },
-      alt
-    }
+    publishedAt
   }`,
     params: { slug: params.slug ?? '' },
 });
@@ -59,6 +49,7 @@ const { data: posts } = await loadQuery<Post[]>({
         {
             author ? (
                 <>
+                    {/* Informacje o autorze */}
                     <div class="flex flex-col md:flex-row items-start gap-8 mb-12">
                         <div class="flex-shrink-0">
                             {author.image?.asset?.url && (
@@ -69,7 +60,6 @@ const { data: posts } = await loadQuery<Post[]>({
                                 />
                             )}
                         </div>
-
                         <div class="flex-1 flex flex-col">
                             <h1 class="text-3xl font-bold mb-2">
                                 {author.name}
@@ -79,70 +69,53 @@ const { data: posts } = await loadQuery<Post[]>({
                                     {author.profession}
                                 </p>
                             )}
-
                             {author.bio && author.bio.length > 0 && (
-                                <div class="prose max-w-none mb-8">
+                                <div class="prose max-w-none mb-8 text-p1">
                                     <PortableText portableText={author.bio} />
                                 </div>
                             )}
                         </div>
                     </div>
 
+                    {/* Lista postów */}
                     <h2 class="text-2xl font-semibold mb-4">
                         All Posts by {author.name}
                     </h2>
+
                     {posts && posts.length > 0 ? (
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                        <ul class="list-disc list-inside text-lg text-gray-800">
                             {posts.map((post) => (
-                                <a
-                                    href={`/blog/post/${post.slug.current}`}
-                                    class="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
-                                >
-                                    {post.mainImage?.asset?.url && (
-                                        <img
-                                            src={post.mainImage.asset.url}
-                                            alt={
-                                                post.mainImage.alt ?? post.title
-                                            }
-                                            class="w-full h-48 object-cover"
-                                        />
-                                    )}
-                                    <div class="p-4 flex-1 flex flex-col">
-                                        <h3 class="text-lg font-semibold mb-2">
-                                            {post.title}
-                                        </h3>
-                                        {post.categories &&
-                                            post.categories.length > 0 && (
-                                                <p class="text-sm text-gray-500 mb-2">
-                                                    Categories:{' '}
-                                                    {post.categories
-                                                        .map((c) => c.title)
-                                                        .join(', ')}
-                                                </p>
-                                            )}
-                                        {post.publishedAt && (
-                                            <p class="text-sm text-gray-400 mb-2">
-                                                {new Date(
-                                                    post.publishedAt
-                                                ).toLocaleDateString()}
-                                            </p>
-                                        )}
-                                        <span class="mt-auto inline-block text-blue-500 underline">
-                                            Read more
+                                <li>
+                                    <a
+                                        href={`/blog/post/${post.slug.current}`}
+                                        class="text-p4 hover:underline"
+                                    >
+                                        {post.title}
+                                    </a>{' '}
+                                    {post.publishedAt && (
+                                        <span class="text-gray-500">
+                                            (
+                                            {new Date(
+                                                post.publishedAt
+                                            ).toLocaleDateString()}
+                                            )
                                         </span>
-                                    </div>
-                                </a>
+                                    )}
+                                </li>
                             ))}
-                        </div>
+                        </ul>
                     ) : (
                         <p class="h6 font-kanit">
-                            No posts found for this author.
+                            No posts found for this author
                         </p>
                     )}
                 </>
             ) : (
-                <p>Author not found.</p>
+                <p>Author not found</p>
             )
         }
+        <div class="mt-16">
+            <Button href="/blog"> Back to blog section </Button>
+        </div>
     </section>
 </Layout>
