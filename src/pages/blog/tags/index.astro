@@ -1,79 +1,30 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { loadQuery } from '@/sanity/lib/load-query';
+import {
+    loadTags,
+    loadPostsByTag,
+    countPostsByTag,
+} from '@/sanity/lib/dataLoaders';
 import PostGrid from '@/components/features/PostGrid.astro';
+import Tags from '@/components/features/Tags.astro';
 
 const url = new URL(Astro.request.url);
-const tagSlug = url.searchParams.get('tag') || undefined;
+
+const tagSlug: string | null = url.searchParams.get('tag') ?? null;
+
 const pageParam = url.searchParams.get('page') || '1';
 const page = parseInt(pageParam, 10) || 1;
 const postsPerPage = 9;
 const offset = (page - 1) * postsPerPage;
 
-const { data: allTags } = await loadQuery<string[]>({
-    query: `array::unique(*[_type == "post"].tags[])`,
-});
+const allTagsResult = await loadTags();
+const allTags = allTagsResult.data;
 
-const filteredPostsQuery = `*[_type == "post" ${
-    tagSlug ? `&& $tagSlug in tags` : ''
-}]| order(publishedAt desc)[$start...$end]{
-    title,
-    "slug": slug.current,
-    excerpt,
-    publishedAt,
-    mainImage{
-        asset->{
-            url
-        },
-        alt
-    },
-    "author": author->{
-        name
-    },
-    categories[]->{
-        title,
-        "slug": slug.current
-    },
-    tags
-}`;
+const filteredPostsResult = await loadPostsByTag(tagSlug, offset, postsPerPage);
+const filteredPosts = filteredPostsResult.data;
 
-const filteredPostsParams: Record<string, any> = {
-    start: offset,
-    end: offset + postsPerPage,
-};
-if (tagSlug) {
-    filteredPostsParams.tagSlug = tagSlug;
-}
-
-const { data: filteredPosts } = await loadQuery<
-    {
-        title: string;
-        slug: string;
-        excerpt?: string;
-        publishedAt?: string;
-        mainImage?: { asset?: { url: string }; alt?: string };
-        author?: { name: string };
-        categories?: { title: string; slug?: string }[];
-        tags?: string[];
-    }[]
->({
-    query: filteredPostsQuery,
-    params: filteredPostsParams,
-});
-
-const totalPostsQuery = `count(*[_type == "post" ${
-    tagSlug ? `&& $tagSlug in tags` : ''
-}])`;
-
-const totalPostsParams: Record<string, any> = {};
-if (tagSlug) {
-    totalPostsParams.tagSlug = tagSlug;
-}
-
-const { data: totalPosts } = await loadQuery<number>({
-    query: totalPostsQuery,
-    params: totalPostsParams,
-});
+const totalPostsResult = await countPostsByTag(tagSlug);
+const totalPosts = totalPostsResult.data;
 
 const totalPages = Math.ceil(totalPosts / postsPerPage);
 ---
@@ -84,38 +35,14 @@ const totalPages = Math.ceil(totalPosts / postsPerPage);
     >
         <div class="container mb-8">
             <h2 class="text-2xl font-semibold mb-4">Browse by Tags</h2>
-            <div class="flex flex-wrap gap-2 mb-8">
-                <a
-                    href="/blog/tags"
-                    class={`px-4 py-2 rounded ${
-                        !tagSlug
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 hover:bg-gray-300'
-                    }`}
-                >
-                    All
-                </a>
-                {
-                    allTags.map((tag) => (
-                        <a
-                            href={`/blog/tags?tag=${tag}`}
-                            class={`px-4 py-2 rounded ${
-                                tag === tagSlug
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-200 hover:bg-gray-300'
-                            }`}
-                        >
-                            #{tag}
-                        </a>
-                    ))
-                }
-            </div>
+
+            <Tags tags={allTags} selectedTag={tagSlug ?? undefined} />
 
             <PostGrid
                 posts={filteredPosts}
                 totalPages={totalPages}
                 currentPage={page}
-                selectedTag={tagSlug}
+                selectedTag={tagSlug ?? undefined}
             />
         </div>
     </section>

@@ -1,6 +1,12 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { loadQuery } from '@/sanity/lib/load-query';
+import {
+    loadCategories,
+    loadPosts,
+    countPosts,
+    loadFeaturedPosts,
+    loadAuthors,
+} from '@/sanity/lib/dataLoaders';
 import FeaturedPosts from '@/components/features/FeaturedPosts.astro';
 import Authors from '@/components/features/Authors.astro';
 import Categories from '@/components/features/Categories.astro';
@@ -14,106 +20,16 @@ const page = parseInt(pageParam, 10) || 1;
 const postsPerPage = 4;
 const offset = (page - 1) * postsPerPage;
 
-const { data: categories } = await loadQuery<
-    { title: string; slug: { current: string } }[]
->({
-    query: `*[_type == "category"]{title, slug}`,
-});
-
-let categoryFilter = '';
-if (categoryParam !== 'all') {
-    categoryFilter = `&& $catSlug in categories[]->slug.current`;
-}
-
-const { data: filteredPosts } = await loadQuery<
-    {
-        title: string;
-        slug: string;
-        excerpt?: string;
-        publishedAt?: string;
-        mainImage?: { asset?: { url: string }; alt?: string };
-        author?: { name: string };
-        categories?: { title: string; slug?: string }[];
-        tags?: string[];
-    }[]
->({
-    query: `*[_type == "post" ${categoryFilter}]| order(publishedAt desc)[$start...$end]{
-        title,
-        "slug": slug.current,
-        excerpt,
-        publishedAt,
-        mainImage{
-            asset->{
-                url
-            },
-            alt
-        },
-        "author": author->{
-            name
-        },
-        categories[]->{
-            title,
-            "slug": slug.current
-        },
-        tags
-    }`,
-    params: {
-        catSlug: categoryParam,
-        start: offset,
-        end: offset + postsPerPage,
-    },
-});
-
-const { data: totalPosts } = await loadQuery<number>({
-    query: `count(*[_type == "post" ${categoryFilter}])`,
-    params: { catSlug: categoryParam },
-});
-
+const { data: categories } = await loadCategories();
+const { data: filteredPosts } = await loadPosts(
+    categoryParam,
+    offset,
+    postsPerPage
+);
+const { data: totalPosts } = await countPosts(categoryParam);
 const totalPages = Math.ceil(totalPosts / postsPerPage);
-
-const { data: featuredPosts } = await loadQuery<
-    {
-        title: string;
-        slug: string;
-        excerpt?: string;
-        publishedAt?: string;
-        author?: { name?: string };
-        mainImage?: { asset?: { url: string }; alt?: string };
-        tags?: string[];
-        categories?: { title: string; slug?: string }[];
-    }[]
->({
-    query: `*[_type == "post" && featured == true]{
-    title,
-    "slug": slug.current,
-    excerpt,
-    publishedAt,
-    "author": author->{
-      name
-    },
-    mainImage{
-      asset->{
-        url
-      },
-      alt
-    },
-    tags,
-    categories[]->{
-      title,
-      "slug": slug.current
-    }
-  }`,
-});
-
-const { data: authorsData } = await loadQuery<
-    {
-        name: string;
-        slug: { current: string };
-        image?: { asset?: { url: string } };
-    }[]
->({
-    query: `*[_type == "author"]{name,slug,image{asset->{url}}}`,
-});
+const { data: featuredPosts } = await loadFeaturedPosts();
+const { data: authorsData } = await loadAuthors();
 ---
 
 <Layout title="Blog">
@@ -126,7 +42,6 @@ const { data: authorsData } = await loadQuery<
                 categories={categories}
                 selectedCategory={categoryParam}
             />
-
             <PostsGrid
                 posts={filteredPosts}
                 totalPages={totalPages}
