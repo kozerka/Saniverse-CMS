@@ -17,7 +17,7 @@ const url = new URL(Astro.request.url);
 const categoryParam = url.searchParams.get('category') || 'all';
 const pageParam = url.searchParams.get('page') || '1';
 const page = parseInt(pageParam, 10) || 1;
-const postsPerPage = 4;
+const postsPerPage = 6;
 const offset = (page - 1) * postsPerPage;
 
 const { data: categories } = await loadCategories();

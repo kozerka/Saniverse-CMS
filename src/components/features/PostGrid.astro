@@ -1,6 +1,7 @@
 ---
 import { type Post } from '@/types';
 import PostCard from '@/components/features/PostCard.astro';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 export interface Props {
     posts: Post[];
@@ -22,6 +23,9 @@ const getPaginationUrl = (pageNumber: number) => {
     }
     return `/blog?page=${pageNumber}`;
 };
+
+const prevPage = currentPage > 1 ? currentPage - 1 : null;
+const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 ---
 
 <section class="mt-8">
@@ -33,26 +37,55 @@ const getPaginationUrl = (pageNumber: number) => {
                 ))}
             </div>
         ) : (
-            <p class="h6 font-kanit">No posts found.</p>
+            <p class="h6 font-kanit text-center">No posts found.</p>
         )
     }
 
     {
         totalPages > 1 && (
-            <div class="flex gap-2">
+            <div class="flex justify-center items-center gap-2 mt-8">
+                {/* Prev Button */}
+                {prevPage && (
+                    <a
+                        href={getPaginationUrl(prevPage)}
+                        class="flex items-center justify-center px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300"
+                        aria-label="Previous Page"
+                    >
+                        <FaChevronLeft className="text-gray-700" />
+                        <span class="ml-1 text-sm font-semibold text-gray-700">
+                            Prev
+                        </span>
+                    </a>
+                )}
+
+                {/* Page Numbers */}
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (pageNumber) => (
                         <a
                             href={getPaginationUrl(pageNumber)}
-                            class={`px-3 py-1 rounded ${
+                            class={`px-4 py-2 rounded-lg font-semibold text-sm transition duration-300 ${
                                 currentPage === pageNumber
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-200 hover:bg-gray-300'
+                                    ? 'bg-blue-500 text-white shadow-lg'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
                         >
                             {pageNumber}
                         </a>
                     )
+                )}
+
+                {/* Next Button */}
+                {nextPage && (
+                    <a
+                        href={getPaginationUrl(nextPage)}
+                        class="flex items-center justify-center px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300"
+                        aria-label="Next Page"
+                    >
+                        <span class="mr-1 text-sm font-semibold text-gray-700">
+                            Next
+                        </span>
+                        <FaChevronRight className="text-gray-700" />
+                    </a>
                 )}
             </div>
         )
